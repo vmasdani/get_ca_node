@@ -25,7 +25,7 @@ app.use("/", async (req, res) => {
         `/usr/bin/openssl s_client -showcerts -servername ${url} -connect ${url}:${port} </dev/null`
       );
 
-      console.log(result.stdout);
+      // console.log(result.stdout);
 
       res.setHeader("content-type", "text/plain");
       res.send(
