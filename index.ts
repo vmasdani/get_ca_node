@@ -20,19 +20,24 @@ app.use("/", async (req, res) => {
     res.status(500);
     res.send(`Invalid port: ${port}`);
   } else {
-    const result = await util.promisify(exec)(
-      `/usr/bin/openssl s_client -showcerts -servername ${url} -connect ${url}:${port} </dev/null`
-    );
+    try {
+      const result = await util.promisify(exec)(
+        `/usr/bin/openssl s_client -showcerts -servername ${url} -connect ${url}:${port} </dev/null`
+      );
 
-    console.log(result.stdout);
+      console.log(result.stdout);
 
-    res.setHeader("content-type", "text/plain");
-    res.send(
-      `-----BEGIN CERTIFICATE-----\n${result.stdout
-        .split("-----BEGIN CERTIFICATE-----")?.[2]
-        ?.split("-----END CERTIFICATE-----")?.[0]
-        ?.trim()}\n-----END CERTIFICATE-----`
-    );
+      res.setHeader("content-type", "text/plain");
+      res.send(
+        `-----BEGIN CERTIFICATE-----\n${result.stdout
+          .split("-----BEGIN CERTIFICATE-----")?.[2]
+          ?.split("-----END CERTIFICATE-----")?.[0]
+          ?.trim()}\n-----END CERTIFICATE-----`
+      );
+    } catch (e) {
+      res.status(500);
+      res.send(e);
+    }
   }
 });
 
